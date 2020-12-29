@@ -19,4 +19,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cinema.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Film.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bilet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sala.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Angajat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
