@@ -1,8 +1,8 @@
 # ProiectPOO2020-Griffindor-Cinema
 
-Specificații proiect POO 2020-2021
-Proiectul din acest an își propune realizarea unei aplicații de emitere și gestionare a biletelor de
-film (cinema) în C++, ce utilizează fișiere binare și dispune de o interfață în linia de comandă.
+<h4>Specificații proiect POO 2020-2021</h4><br>
+<p>Proiectul din acest an își propune realizarea unei aplicații de emitere și gestionare a biletelor de
+film (cinema) în C++, ce utilizează fișiere binare și dispune de o interfață în linia de comandă.</p>
 Cerințe:
 Faza 1
 • Definirea a minim 5 clase ce au legătură cu tema proiectului (ex: Film, Bilet, etc)
