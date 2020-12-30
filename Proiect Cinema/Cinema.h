@@ -9,6 +9,7 @@ class Cinema
 {
 	char* nume;
 	string adresa;
+	//test
 	Sala nrSali[4]; //5 sali in cinema
 	//Bilet bileteVandute;
 	//Angajat nrAngajati;
