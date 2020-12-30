@@ -14,6 +14,7 @@ using namespace std;
 
 void main() {
 
+	//
 	//interfata consola meniu
 	//for (int i = 0; i < 77; i++) {
 	//	cout << "=";

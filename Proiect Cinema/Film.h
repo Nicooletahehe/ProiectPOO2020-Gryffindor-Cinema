@@ -8,6 +8,7 @@ class Film
 {
 	const int idFilm;
 	static string tipFilm;// camp static
+
 	char* numeFilm;
 	int nrVizionari;
 	//int*

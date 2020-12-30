@@ -7,6 +7,8 @@ using namespace std;
 
 class Cinema
 {
+	const int idCinema;
+	//static string nume
 	char* nume;
 	string adresa;
 	//test
