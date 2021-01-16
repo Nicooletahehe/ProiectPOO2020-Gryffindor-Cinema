@@ -1,51 +1,86 @@
 #pragma once
+
 #include <iostream>
 #include <string>
+
 using namespace std;
+
 #define _CRT_SECURE_NO_WARNINGS
 
 class Film
 {
-	const int idFilm;
-	static string tipFilm;// camp static
+private:
+	// Un intreg unic care identifica filmul in sistemul nostru
+	const int id;
 
-	char* numeFilm;
-	int nrVizionari;
-	//int*
-	int durata; //in secunde
-	//Tipologii filme
+	// ID-ul urmatorului film (este incrementat dupa ce un nou film este initializat)
+	static int last_id;
+
+	// Numele filmului
+	char* nume;
+
+	// Intervalele orare in care filmul este programat
+	// Fiecare ora, este de forma HHMM
+	int* intervale;
+
+	// Numarul de intervale
+	int nrIntervale;
+
+	// Numarul de vizualizari
+	int vizionari;
+
+	// Durata filmului (in minute)
+	int durata;
 
 public:
-	//Film() : idFilm(0)
-	//{
-	//	numeFilm = nullptr;
-	//	durata = 0;
-	//}
 
-	//constructor cu parametri
+	Film(char* nume, int durata);
+	Film(const Film& film);
+	~Film();
 
-	//constructorul de copiere
+	Film operator=(const Film& film);
+	int operator[](std::size_t i);
 
-	//destructorul
+	Film& operator+=(const Film& rhs);
+	friend Film operator+(Film lhs, const Film& rhs);
 
-	//operatorul =
+	Film& operator++();
+	Film operator++(int);
+	Film& operator--();
+	Film operator--(int);
 
-	//operator []
+	operator int() const { return vizionari; }
 
-	//un operator matematic
+	friend bool operator==(const Film& lhs, const Film& rhs);
+	friend bool operator<(const Film& lhs, const Film& rhs);
 
-	//operatorul ++ sau -- (cele 2 forme)
+	friend ostream& operator<<(ostream& out, Film& film);
+	friend istream& operator>>(istream& in, Film& film);
 
-	//operator cast (catre orice tip) explicit sau implicit
+	int getId();
 
-	//operator !
+	void setNume(const char* nume);
+	char* getNume();
 
-	//operator conditional (<.>,=<,>=)
+	void setIntervale(int* intervale, int nrIntervale);
+	// Deoarece trebuie sa intoarcem doua valori, le vom intoarce prin referinta.
+	void getIntervale(int** intervale, int* nrIntervale);
 
-	//operatorul pentru testarea egalitatii dintre 2 obiecte ==
+	// Este util sa stim numarul de intervale, deoarece putem folosi operatorul de
+	// indexare [] pentru a accesa intervalele.
+	int getNrIntervale();
 
-	//friend istream >> si ostream <<
+	void setVizionari(int vizionari);
+	int getVizionari();
+
+	void setDurata(int durata);
+	int getDurata();
 };
-string Film::tipFilm = "digital";
 
+Film operator+(Film lhs, const Film& rhs);
 
+bool operator==(const Film& lhs, const Film& rhs);
+bool operator<(const Film& lhs, const Film& rhs);
+
+ostream& operator<<(ostream& out, Film& film);
+istream& operator>>(istream& in, Film& film);
