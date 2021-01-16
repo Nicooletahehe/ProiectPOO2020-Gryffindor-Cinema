@@ -4,15 +4,32 @@
 #include <string.h>
 
 #include <iomanip>
-#include <vector>
 
 int Film::last_id = 0;
+
+Film::Film(int id, const char* nume, int *intervale, int nrIntervale, int vizionari, int durata)
+	: id(id)
+	, nume(nullptr)
+	, intervale(nullptr)
+	, nrIntervale(0)
+	, vizionari(0)
+	, durata(durata)
+{
+	this->setNume(nume);
+	this->setIntervale(intervale, nrIntervale);
+
+	// Ne asiguram ca acest camp e mereu "corect" dpdv functional
+	if (last_id < id)
+	{
+		last_id = id;
+	}
+}
 
 Film::Film(const char *nume, int durata)
 	: id(++last_id)
 	, nume(nullptr)
-	, nrIntervale(0)
 	, intervale(nullptr)
+	, nrIntervale(0)
 	, vizionari(0)
 	, durata(durata)
 {
@@ -22,8 +39,8 @@ Film::Film(const char *nume, int durata)
 Film::Film(const Film& film)
 	: id(film.id)
 	, nume(nullptr)
-	, nrIntervale(0)
 	, intervale(nullptr)
+	, nrIntervale(0)
 	, vizionari(film.vizionari)
 	, durata(film.durata)
 {
@@ -35,6 +52,69 @@ Film::~Film()
 {
 	this->setNume(nullptr);
 	this->setIntervale(nullptr, 0);
+}
+
+vector<Film> Film::incarca(string cale)
+{
+	vector<Film> filme;
+
+	ifstream in(cale, ios::binary);
+	if (!in.good()) {
+		// Fisierul poate sa nu existe
+		return filme;
+	}
+
+	int nr;
+	in.read((char*)&nr, sizeof(nr));
+
+	for (int i = 0; i < nr; ++i)
+	{
+		int id;
+		in.read((char*)&id, sizeof(id));
+
+		int numeLen;
+		in.read((char*)&numeLen, sizeof(numeLen));
+		char* nume = new char[numeLen];
+		in.read(nume, numeLen);
+
+		int nrIntervale;
+		in.read((char*)&nrIntervale, sizeof(nrIntervale));
+		int *intervale = new int[nrIntervale];
+		in.read((char*)intervale, nrIntervale * sizeof(int));
+		
+		int vizionari;
+		in.read((char*)&vizionari, sizeof(vizionari));
+
+		int durata;
+		in.read((char*)&durata, sizeof(durata));
+
+		filme.emplace_back(id, nume, intervale, nrIntervale, vizionari, durata);
+
+		delete[] nume;
+		delete[] intervale;
+	}
+
+	return filme;
+}
+
+void Film::salveaza(string cale, vector<Film> filme)
+{
+	ofstream out(cale, ios::binary);
+	
+	int nr = filme.size();
+	out.write((char*)&nr, sizeof(nr));
+
+	for (int i = 0; i < filme.size(); ++i)
+	{
+		out.write((char*)&filme[i].id, sizeof(filme[i].id));
+		int len = strlen(filme[i].nume) + 1;
+		out.write((char*)&len, sizeof(len));
+		out.write(filme[i].nume, len);
+		out.write((char*)&filme[i].nrIntervale, sizeof(filme[i].nrIntervale));
+		out.write((char*)&filme[i].intervale, filme[i].nrIntervale * sizeof(int));
+		out.write((char*)&filme[i].vizionari, sizeof(filme[i].vizionari));
+		out.write((char*)&filme[i].durata, sizeof(filme[i].durata));
+	}
 }
 
 Film Film::operator=(const Film& film)
@@ -106,7 +186,7 @@ bool operator<(const Film& lhs, const Film& rhs)
 
 ostream& operator<<(ostream& out, Film& film)
 {
-	out << "Film '" << film.nume << "' (vizionat de " << film.getVizionari() << " ori, durata " << film.durata << " minute)\n";
+	out << "Film '" << film.nume << "' (id = " << film.id << ", vizionat de " << film.getVizionari() << " ori, durata " << film.durata << " minute)\n";
 	
 	if (film.nrIntervale > 0)
 	{

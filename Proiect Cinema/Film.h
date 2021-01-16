@@ -1,7 +1,9 @@
 #pragma once
 
+#include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -33,10 +35,13 @@ private:
 	int durata;
 
 public:
-
+	Film(int id, const char* nume, int* intervale, int nrIntervale, int vizionari, int durata);
 	Film(const char* nume, int durata);
 	Film(const Film& film);
 	~Film();
+
+	static vector<Film> incarca(string cale);
+	static void salveaza(string cale, vector<Film> filme);
 
 	Film operator=(const Film& film);
 	int operator[](std::size_t i);
