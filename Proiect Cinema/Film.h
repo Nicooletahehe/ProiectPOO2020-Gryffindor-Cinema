@@ -34,7 +34,7 @@ private:
 
 public:
 
-	Film(char* nume, int durata);
+	Film(const char* nume, int durata);
 	Film(const Film& film);
 	~Film();
 

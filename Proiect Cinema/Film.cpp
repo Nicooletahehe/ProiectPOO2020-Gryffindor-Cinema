@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <iomanip>
 #include <vector>
 
 int Film::last_id = 0;
 
-Film::Film(char *nume, int durata)
+Film::Film(const char *nume, int durata)
 	: id(++last_id)
 	, nume(nullptr)
 	, nrIntervale(0)
@@ -106,16 +107,32 @@ bool operator<(const Film& lhs, const Film& rhs)
 ostream& operator<<(ostream& out, Film& film)
 {
 	out << "Film '" << film.nume << "' (vizionat de " << film.getVizionari() << " ori, durata " << film.durata << " minute)\n";
-	out << "Filmul se difuzeaza in urmatoarele intervale orare:\n";
-	for (int i = 0; i < film.nrIntervale; ++i) {
-		int h = film.intervale[i] / 100, m = film.intervale[i] % 100;
-		
-		// Calculam ora de final
-		int m2 = m + film.durata;
-		int h2 = (h + (m2 / 60)) % 24;
-		m2 %= 60;
+	
+	if (film.nrIntervale > 0)
+	{
+		out << "Filmul se difuzeaza in urmatoarele intervale orare:\n";
+		for (int i = 0; i < film.nrIntervale; ++i) {
+			int h = film.intervale[i] / 100, m = film.intervale[i] % 100;
 
-		out << " - " << h << ":" << m << " -> " << h2 << ":" << m2 << "\n";
+			// Calculam ora de final
+			int m2 = m + film.durata;
+			int h2 = (h + (m2 / 60)) % 24;
+			m2 %= 60;
+
+			out << " - "
+				<< std::setw(2) << std::setfill('0') << h
+				<< ":"
+				<< std::setw(2) << std::setfill('0') << m
+				<< " -> "
+				<< std::setw(2) << std::setfill('0') << h2
+				<< ":"
+				<< std::setw(2) << std::setfill('0') << m2
+				<< "\n";
+		}
+	}
+	else
+	{
+		out << "Filmul nu se difuzeaza";
 	}
 
 	return out;
@@ -149,12 +166,16 @@ int Film::getId()
 void Film::setNume(const char* nume)
 {
 	delete[] this->nume;
+	this->nume = nullptr;
 
-	size_t len = strlen(nume);
-	if (nume != nullptr && len > 0)
+	if (nume != nullptr)
 	{
-		this->nume = new char[len + 1];
-		strcpy_s(this->nume, len + 1, nume);
+		size_t len = strlen(nume);
+		if (len > 0)
+		{
+			this->nume = new char[len + 1];
+			strcpy_s(this->nume, len + 1, nume);
+		}
 	}
 }
 
@@ -166,11 +187,14 @@ char *Film::getNume()
 void Film::setIntervale(int* intervale, int nrIntervale)
 {
 	delete[] this->intervale;
+	this->intervale = nullptr;
 	this->nrIntervale = 0;
 
 	if (intervale != nullptr && nrIntervale > 0)
 	{
 		this->intervale = new int[nrIntervale];
+		this->nrIntervale = nrIntervale;
+
 		for (int i = 0; i < nrIntervale; ++i)
 		{
 			this->intervale[i] = intervale[i];
