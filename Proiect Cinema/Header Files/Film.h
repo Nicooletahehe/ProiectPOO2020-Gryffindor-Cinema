@@ -80,8 +80,29 @@ public:
 	void setVizionari(int vizionari);
 	int getVizionari();
 
-	void setDurata(int durata);
-	int getDurata();
+	virtual void setDurata(int durata);
+	virtual int getDurata();
+
+	virtual bool areSubtitrari() { return true; }
+};
+
+class Scurtmetraj : public Film
+{
+public:
+	void setDurata(int durata)
+	{
+		// Ne asiguram ca durata unui scurtmetraj e mereu sub 30 de minute
+		if (durata < 30)
+		{
+			Film::setDurata(durata);
+		}
+	}
+};
+
+class FilmCopii : public Film
+{
+	// Filmele pentru copii sunt dublate, nu au subtitrari.
+	bool areSubtitrari() { return false; }
 };
 
 template<typename T>
