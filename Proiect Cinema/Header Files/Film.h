@@ -15,6 +15,7 @@ public:
 	virtual int getId() = 0;
 	virtual void setNume(string nume) = 0;
 	virtual string getNume() = 0;
+	virtual ~IFilm() {}
 };
 
 class Film : public IFilm
@@ -43,7 +44,7 @@ public:
 	Film(int id, string nume, vector<int> intervale, int vizionari, int durata);
 	Film(string nume, int durata);
 	Film(const Film& film);
-	~Film();
+	virtual ~Film();
 
 	static vector<Film> incarca(string cale);
 	static void salveaza(string cale, vector<Film> filme);
