@@ -9,7 +9,15 @@ using namespace std;
 
 #define _CRT_SECURE_NO_WARNINGS
 
-class Film
+class IFilm
+{
+public:
+	virtual int getId() = 0;
+	virtual void setNume(const char* nume) = 0;
+	virtual char* getNume() = 0;
+};
+
+class Film : public IFilm
 {
 private:
 	// Un intreg unic care identifica filmul in sistemul nostru
