@@ -52,6 +52,8 @@ public:
 
 	int* getBonus();
 	void setBonus(int*, int);
+
+	int getIdAngajat();
 };
 
 Angajat operator+(int, Angajat);
@@ -59,4 +61,3 @@ bool operator==(const Angajat& a1, const Angajat& a2);
 bool operator<(const Angajat& a1, const Angajat& a2);
 ostream& operator<<(ostream& out, Angajat a);
 istream& operator>>(istream& in, Angajat& a);
-

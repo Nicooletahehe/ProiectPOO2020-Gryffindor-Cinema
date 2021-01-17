@@ -139,6 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Angajat.cpp" />
+    <ClCompile Include="Cinema.cpp" />
     <ClCompile Include="Film.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
