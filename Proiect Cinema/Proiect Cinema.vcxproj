@@ -143,11 +143,11 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Angajat.h" />
-    <ClInclude Include="Bilet.h" />
-    <ClInclude Include="Cinema.h" />
-    <ClInclude Include="Film.h" />
-    <ClInclude Include="Sala.h" />
+    <ClInclude Include="Header Files\Angajat.h" />
+    <ClInclude Include="Header Files\Bilet.h" />
+    <ClInclude Include="Header Files\Cinema.h" />
+    <ClInclude Include="Header Files\Film.h" />
+    <ClInclude Include="Header Files\Sala.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

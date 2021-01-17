@@ -23,19 +23,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cinema.h">
+    <ClInclude Include="Header Files\Angajat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Film.h">
+    <ClInclude Include="Header Files\Bilet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Bilet.h">
+    <ClInclude Include="Header Files\Cinema.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sala.h">
+    <ClInclude Include="Header Files\Film.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Angajat.h">
+    <ClInclude Include="Header Files\Sala.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
 
-#include "Cinema.h"
-#include "Film.h"
-#include "Bilet.h"
-#include "Sala.h"
-#include "Angajat.h"
+#include "Header Files/Cinema.h"
+#include "Header Files/Film.h"
+#include "Header Files/Bilet.h"
+#include "Header Files/Sala.h"
+#include "Header Files/Angajat.h"
 
 using namespace std;
 
