@@ -84,6 +84,16 @@ public:
 	int getDurata();
 };
 
+template<typename T>
+class Serie
+{
+private:
+	vector<T> filme;
+
+public:
+	T operator[](std::size_t i) { return filme[i]; };
+};
+
 Film operator+(Film lhs, const Film& rhs);
 
 bool operator==(const Film& lhs, const Film& rhs);
