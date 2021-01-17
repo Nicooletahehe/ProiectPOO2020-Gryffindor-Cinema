@@ -56,6 +56,8 @@ public:
 
 	operator int() const { return vizionari; }
 
+	bool operator!() { return vizionari > 0; }
+
 	friend bool operator==(const Film& lhs, const Film& rhs);
 	friend bool operator<(const Film& lhs, const Film& rhs);
 
