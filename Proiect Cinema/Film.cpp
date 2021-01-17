@@ -7,17 +7,13 @@
 
 int Film::last_id = 0;
 
-Film::Film(int id, const char* nume, int *intervale, int nrIntervale, int vizionari, int durata)
+Film::Film(int id, string nume, vector<int> intervale, int vizionari, int durata)
 	: id(id)
-	, nume(nullptr)
-	, intervale(nullptr)
-	, nrIntervale(0)
+	, nume(nume)
+	, intervale(intervale)
 	, vizionari(0)
 	, durata(durata)
 {
-	this->setNume(nume);
-	this->setIntervale(intervale, nrIntervale);
-
 	// Ne asiguram ca acest camp e mereu "corect" dpdv functional
 	if (last_id < id)
 	{
@@ -25,11 +21,10 @@ Film::Film(int id, const char* nume, int *intervale, int nrIntervale, int vizion
 	}
 }
 
-Film::Film(const char *nume, int durata)
+Film::Film(string nume, int durata)
 	: id(++last_id)
-	, nume(nullptr)
-	, intervale(nullptr)
-	, nrIntervale(0)
+	, nume(nume)
+	, intervale()
 	, vizionari(0)
 	, durata(durata)
 {
@@ -38,20 +33,15 @@ Film::Film(const char *nume, int durata)
 
 Film::Film(const Film& film)
 	: id(film.id)
-	, nume(nullptr)
-	, intervale(nullptr)
-	, nrIntervale(0)
+	, nume(film.nume)
+	, intervale(film.intervale)
 	, vizionari(film.vizionari)
 	, durata(film.durata)
 {
-	this->setNume(film.nume);
-	this->setIntervale(film.intervale, film.nrIntervale);
 }
 
 Film::~Film()
 {
-	this->setNume(nullptr);
-	this->setIntervale(nullptr, 0);
 }
 
 vector<Film> Film::incarca(string cale)
@@ -79,8 +69,8 @@ vector<Film> Film::incarca(string cale)
 
 		int nrIntervale;
 		in.read((char*)&nrIntervale, sizeof(nrIntervale));
-		int *intervale = new int[nrIntervale];
-		in.read((char*)intervale, nrIntervale * sizeof(int));
+		vector<int> intervale(nrIntervale);
+		in.read((char*)intervale.data(), nrIntervale * sizeof(int));
 		
 		int vizionari;
 		in.read((char*)&vizionari, sizeof(vizionari));
@@ -88,10 +78,9 @@ vector<Film> Film::incarca(string cale)
 		int durata;
 		in.read((char*)&durata, sizeof(durata));
 
-		filme.emplace_back(id, nume, intervale, nrIntervale, vizionari, durata);
+		filme.emplace_back(id, nume, intervale, vizionari, durata);
 
 		delete[] nume;
-		delete[] intervale;
 	}
 
 	return filme;
@@ -107,11 +96,12 @@ void Film::salveaza(string cale, vector<Film> filme)
 	for (int i = 0; i < filme.size(); ++i)
 	{
 		out.write((char*)&filme[i].id, sizeof(filme[i].id));
-		int len = strlen(filme[i].nume) + 1;
+		int len = filme[i].nume.size() + 1;
 		out.write((char*)&len, sizeof(len));
-		out.write(filme[i].nume, len);
-		out.write((char*)&filme[i].nrIntervale, sizeof(filme[i].nrIntervale));
-		out.write((char*)&filme[i].intervale, filme[i].nrIntervale * sizeof(int));
+		out.write(filme[i].nume.c_str(), len);
+		int nrIntervale = filme[i].intervale.size();
+		out.write((char*)&nrIntervale, sizeof(nrIntervale));
+		out.write((char*)filme[i].intervale.data(), nrIntervale * sizeof(int));
 		out.write((char*)&filme[i].vizionari, sizeof(filme[i].vizionari));
 		out.write((char*)&filme[i].durata, sizeof(filme[i].durata));
 	}
@@ -120,7 +110,7 @@ void Film::salveaza(string cale, vector<Film> filme)
 Film Film::operator=(const Film& film)
 {
 	this->setNume(film.nume);
-	this->setIntervale(film.intervale, film.nrIntervale);
+	this->setIntervale(film.intervale);
 	this->setVizionari(film.vizionari);
 	this->setDurata(film.durata);
 	return *this;
@@ -128,7 +118,7 @@ Film Film::operator=(const Film& film)
 
 int Film::operator[](std::size_t i)
 {
-	if (i > 0 && i < nrIntervale)
+	if (i > 0 && i < intervale.size())
 	{
 		return intervale[i];
 	}
@@ -176,22 +166,23 @@ Film Film::operator--(int)
 
 bool operator==(const Film& lhs, const Film& rhs)
 {
-	return strcmp(lhs.nume, rhs.nume) == 0;
+	return lhs.nume == rhs.nume;
 }
 
 bool operator<(const Film& lhs, const Film& rhs)
 {
-	return strcmp(lhs.nume, rhs.nume) < 0;
+	return lhs.nume < rhs.nume;
 }
 
 ostream& operator<<(ostream& out, Film& film)
 {
 	out << "Film '" << film.nume << "' (id = " << film.id << ", vizionat de " << film.getVizionari() << " ori, durata " << film.durata << " minute)\n";
 	
-	if (film.nrIntervale > 0)
+	if (film.intervale.size() > 0)
 	{
 		out << "Filmul se difuzeaza in urmatoarele intervale orare:\n";
-		for (int i = 0; i < film.nrIntervale; ++i) {
+		for (int i = 0; i < film.intervale.size(); ++i)
+		{
 			int h = film.intervale[i] / 100, m = film.intervale[i] % 100;
 
 			// Calculam ora de final
@@ -233,7 +224,7 @@ istream& operator>>(istream& in, Film& film)
 		intervale.emplace_back(interval);
 	}
 
-	film.setIntervale(intervale.data(), nrIntervale);
+	film.setIntervale(intervale);
 
 	return in;
 }
@@ -243,54 +234,24 @@ int Film::getId()
 	return id;
 }
 
-void Film::setNume(const char* nume)
+void Film::setNume(string nume)
 {
-	delete[] this->nume;
-	this->nume = nullptr;
-
-	if (nume != nullptr)
-	{
-		size_t len = strlen(nume);
-		if (len > 0)
-		{
-			this->nume = new char[len + 1];
-			strcpy_s(this->nume, len + 1, nume);
-		}
-	}
+	this->nume = nume;
 }
 
-char *Film::getNume()
+string Film::getNume()
 {
 	return nume;
 }
 
-void Film::setIntervale(int* intervale, int nrIntervale)
+void Film::setIntervale(vector<int> intervale)
 {
-	delete[] this->intervale;
-	this->intervale = nullptr;
-	this->nrIntervale = 0;
-
-	if (intervale != nullptr && nrIntervale > 0)
-	{
-		this->intervale = new int[nrIntervale];
-		this->nrIntervale = nrIntervale;
-
-		for (int i = 0; i < nrIntervale; ++i)
-		{
-			this->intervale[i] = intervale[i];
-		}
-	}
+	this->intervale = intervale;
 }
 
-void Film::getIntervale(int** intervale, int *nrIntervale)
+vector<int> Film::getIntervale()
 {
-	*intervale = this->intervale;
-	*nrIntervale = this->nrIntervale;
-}
-
-int Film::getNrIntervale()
-{
-	return nrIntervale;
+	return intervale;
 }
 
 void Film::setVizionari(int vizionari)

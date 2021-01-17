@@ -13,8 +13,8 @@ class IFilm
 {
 public:
 	virtual int getId() = 0;
-	virtual void setNume(const char* nume) = 0;
-	virtual char* getNume() = 0;
+	virtual void setNume(string nume) = 0;
+	virtual string getNume() = 0;
 };
 
 class Film : public IFilm
@@ -27,14 +27,11 @@ private:
 	static int last_id;
 
 	// Numele filmului
-	char* nume;
+	string nume;
 
 	// Intervalele orare in care filmul este programat
 	// Fiecare ora, este de forma HHMM
-	int* intervale;
-
-	// Numarul de intervale
-	int nrIntervale;
+	vector<int> intervale;
 
 	// Numarul de vizualizari
 	int vizionari;
@@ -43,8 +40,8 @@ private:
 	int durata;
 
 public:
-	Film(int id, const char* nume, int* intervale, int nrIntervale, int vizionari, int durata);
-	Film(const char* nume, int durata);
+	Film(int id, string nume, vector<int> intervale, int vizionari, int durata);
+	Film(string nume, int durata);
 	Film(const Film& film);
 	~Film();
 
@@ -74,16 +71,11 @@ public:
 
 	int getId();
 
-	void setNume(const char* nume);
-	char* getNume();
+	void setNume(string nume);
+	string getNume();
 
-	void setIntervale(int* intervale, int nrIntervale);
-	// Deoarece trebuie sa intoarcem doua valori, le vom intoarce prin referinta.
-	void getIntervale(int** intervale, int* nrIntervale);
-
-	// Este util sa stim numarul de intervale, deoarece putem folosi operatorul de
-	// indexare [] pentru a accesa intervalele.
-	int getNrIntervale();
+	void setIntervale(vector<int> intervale);
+	vector<int> getIntervale();
 
 	void setVizionari(int vizionari);
 	int getVizionari();

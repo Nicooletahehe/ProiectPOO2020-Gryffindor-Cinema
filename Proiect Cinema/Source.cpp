@@ -64,7 +64,7 @@ void command_am() // add movie
 	}
 
 	Film f(nume.c_str(), durata);
-	f.setIntervale(intervale.data(), intervale.size());
+	f.setIntervale(intervale);
 	filme.emplace_back(f);
 
 	cout << "Am adaugat filmul:\n";
@@ -116,7 +116,7 @@ void command_um() // update movie
 		}
 		intervale.emplace_back(interval);
 	}
-	filme[index].setIntervale(intervale.data(), intervale.size());
+	filme[index].setIntervale(intervale);
 
 	cout << "Am modificat filmul:\n";
 	cout << filme[index];
