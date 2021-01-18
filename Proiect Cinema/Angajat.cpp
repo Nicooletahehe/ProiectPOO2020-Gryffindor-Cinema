@@ -2,9 +2,14 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
+#include <iomanip>
+
+//initializarea atributului static
+int Angajat::id = 0;
 //constructor implicit
-Angajat::Angajat() : idAngajat(1)
+Angajat::Angajat() : idAngajat(id)
 {
 	username = NULL;
 	nrAni = 0;
@@ -12,7 +17,32 @@ Angajat::Angajat() : idAngajat(1)
 	anulNasterii = 0;
 }
 //constructor cu parametri
-Angajat::Angajat(const char* nume, int i1, int* i2, int i3) : idAngajat(idAngajat)
+Angajat::Angajat(int idAngajat, const char* nume, int i1, int* i2, int i3) : idAngajat(idAngajat)
+{
+	username = new char[strlen(nume) + 1];
+	strcpy_s(username, strlen(nume) + 1, nume);
+	if (i2 != nullptr && i1 > 0)
+	{
+		bonus = new int[i1];
+		for (int i = 0; i < i1; i++)
+		{
+			bonus[i] = i2[i];
+		}
+		nrAni = i1;
+	}
+	else {
+		bonus = nullptr;
+		nrAni = 0;
+	}
+	anulNasterii = i3;
+
+	if (id < idAngajat)
+	{
+		id = idAngajat;
+	}
+}
+//constructor cu parametri
+Angajat::Angajat(const char* nume, int i1, int* i2, int i3) : idAngajat(++id)
 {
 	username = new char[strlen(nume) + 1];
 	strcpy_s(username, strlen(nume) + 1, nume);
@@ -94,6 +124,65 @@ Angajat& Angajat::operator=(const Angajat& a)
 	}
 	anulNasterii = a.anulNasterii;
 	return *this;
+}
+vector<Angajat> Angajat::incarca(string fisier)
+{
+	vector<Angajat> angajati;
+
+	ifstream in(fisier, ios::binary);
+	if (!in.good()) {
+		// Fisierul poate sa nu existe
+		return angajati;
+	}
+
+	int nr;
+	in.read((char*)&nr, sizeof(nr));
+
+	for (int i = 0; i < nr; ++i)
+	{
+		int id;
+		in.read((char*)&id, sizeof(id));
+
+		int usernameLen;
+		in.read((char*)&usernameLen, sizeof(usernameLen));
+		char* username = new char[usernameLen];
+		in.read(username, usernameLen);
+
+		int nrAni;
+		in.read((char*)&nrAni, sizeof(nrAni));
+		int* bonus = new int[nrAni];
+		in.read((char*)bonus, nrAni * sizeof(int));
+
+		int anulNasterii;
+		in.read((char*)&anulNasterii, sizeof(anulNasterii));
+
+		angajati.emplace_back(id, username, nrAni, bonus, anulNasterii);
+
+		delete[] username;
+		delete[] bonus;
+	}
+
+	return angajati;
+}
+void Angajat::salveaza(string fisier, vector<Angajat> angajati)
+{
+	ofstream out(fisier, ios::binary);
+
+	int nr = size(angajati);
+	out.write((char*)&nr, sizeof(nr));
+
+	for (int i = 0; i < size(angajati); ++i)
+	{
+		out.write((char*)&angajati[i].idAngajat, sizeof(angajati[i].idAngajat));
+		int len = strlen(angajati[i].username) + 1;
+		out.write((char*)&len, sizeof(len));
+		out.write(angajati[i].username, len);
+		out.write((char*)&angajati[i].nrAni, sizeof(angajati[i].nrAni));
+		out.write((char*)&angajati[i].bonus, angajati[i].nrAni * sizeof(int));
+		out.write((char*)&angajati[i].anulNasterii, sizeof(angajati[i].anulNasterii));
+	}
+
+	//out.close();
 }
 //operator []
 int& Angajat::operator[](int index)
@@ -279,5 +368,12 @@ int Angajat::getIdAngajat()
 	return idAngajat;
 }
 
-//initializarea atributului static
-string Angajat::numeCinema = "Griffindor";
+void Angajat::setAnulNasterii(int i) {
+	if (i > 0)
+	{
+		anulNasterii = i;
+	}
+	else {
+		anulNasterii;
+	}
+}
