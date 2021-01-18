@@ -143,6 +143,7 @@
     <ClCompile Include="Cinema.cpp" />
     <ClCompile Include="Film.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Bilet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header Files\Angajat.h" />
