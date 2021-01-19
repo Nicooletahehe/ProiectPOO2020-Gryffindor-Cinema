@@ -111,9 +111,9 @@ Sala::~Sala()
 	{
 		for (int i = 0; i < nrRanduri; i++)
 		{
-			delete[] diagramaLocuri[i];
+			delete diagramaLocuri[i];
 		}
-		delete[] diagramaLocuri;
+		//delete[] diagramaLocuri;
 	}
 	if (numeSala != nullptr)
 	{
@@ -182,9 +182,9 @@ vector<Sala> Sala::incarca(string fisier)
 		in.read(numeSala, numeSalaLen);
 
 		int nrLocuri;
-		in.read((char*)&nrLocuri, sizeof(nrLocuri));
+		in.read((char*)&nrLocuri, sizeof(int));
 		int nrRanduri;
-		in.read((char*)&nrRanduri, sizeof(nrRanduri));
+		in.read((char*)&nrRanduri, sizeof(int));
 
 		//nu stiu
 		/*int** diagramaLocuri = new int* [nrRanduri];
@@ -299,7 +299,6 @@ ostream& operator<<(ostream& out, Sala s)
 			{
 				out << s.diagramaLocuri[i][j] << " ";
 			}
-
 		}
 	}
 	return out;
@@ -384,6 +383,24 @@ void Sala::setNrRanduri(int i)
 	else {
 		nrRanduri;
 	}
+}
+
+int Sala::getNrLocuri()
+{
+	return nrLocuri;
+}
+void Sala::setNrLocuri(int i) {
+	if (i > 0)
+	{
+		nrLocuri = i;
+	}
+	else {
+		nrLocuri;
+	}
+}
+
+int Sala::getIdSala() {
+	return idSala;
 }
 
 int Sala::getNrLocuri()
