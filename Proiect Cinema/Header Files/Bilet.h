@@ -1,18 +1,20 @@
 #pragma once
+#include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
 
 class Bilet
 {
 	const int idBilet;
-	static string numeCinema;
+	static int id;
 	//Film numeFilm;
 	//Film durata;
 	char* numeFilm;
 	int idSala;
-	int nrLoc;
+	int* nrLoc;
 	int nrRand;
 	int nrBilete;
 	double* pretBilet;
@@ -23,13 +25,18 @@ public:
 	//constructor implicit
 	Bilet();
 	//constructor cu parametri
-	Bilet(char*, int, int, int, int, double*);
+	Bilet(int, char*, int, int*, int, int, double*);
+	Bilet(char*, int, int*, int, int, double*);
 	//constructorul de copiere
 	Bilet(const Bilet& b);
 	//destructorul
 	~Bilet();
 	//operatorul =
 	Bilet& operator=(const Bilet& b);
+
+	static vector<Bilet> incarca(string fisier);
+	static void salveaza(string fisier, vector<Bilet> bilete);
+
 	//operator []
 	double& operator[](int);
 	//un operator matematic
@@ -56,7 +63,15 @@ public:
 	void setNrBilete(int);
 
 	double* getPretBilet();
-	void setPretBilet(double* pretBilet, int nrBilet);
+	void setPretBilet(double* pretBilet, int nrBilete);
+
+	int getIdBilet();
+	int getRandBilet();
+	void setRandBilet(int);
+	int* getLocBilet();
+	void setLocBilet(int* loc, int nrBilete);
+	int getIdSala();
+	void setIdSala(int);
 };
 
 Bilet operator+(int, Bilet);

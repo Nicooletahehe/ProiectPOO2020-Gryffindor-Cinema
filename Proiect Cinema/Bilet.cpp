@@ -2,36 +2,67 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
+
+#include <iomanip>
+
+//initializarea atributului static
+int Bilet::id = 0;
 
 //constructor implicit
-Bilet::Bilet() : idBilet(1)
+Bilet::Bilet() : idBilet(id)
 {
 	numeFilm = NULL;
 	idSala = 0;
 	nrRand = 0;
-	nrLoc = 0;
+	nrLoc = NULL;
 	nrBilete = 0;
 	pretBilet = NULL;
 }
 //constructor cu parametri
-Bilet::Bilet(char* nume, int idS, int loc, int rand, int nr, double* pret) : idBilet(idBilet)
+Bilet::Bilet(int idBilet, char* nume, int idS, int* loc, int rand, int nr, double* pret) : idBilet(idBilet)
 {
 	numeFilm = new char[strlen(nume) + 1];
 	strcpy_s(numeFilm, strlen(nume) + 1, nume);
 	idSala = idS;
-	nrLoc = loc;
 	nrRand = rand;
-	if (pret != nullptr && nr > 0)
+	if (pret != nullptr && nr > 0 && loc != nullptr)
 	{
 		pretBilet = new double[nr];
+		nrLoc = new int[nr];
 		for (int i = 0; i < nr; i++)
 		{
 			pretBilet[i] = pret[nr];
+			nrLoc[i] = loc[i];
 		}
 		nrBilete = nr;
 	}
 	else {
 		pretBilet = nullptr;
+		nrLoc = nullptr;
+		nrBilete = 0;
+	}
+}
+Bilet::Bilet(char* nume, int idS, int* loc, int rand, int nr, double* pret) : idBilet(++id)
+{
+	numeFilm = new char[strlen(nume) + 1];
+	strcpy_s(numeFilm, strlen(nume) + 1, nume);
+	idSala = idS;
+	nrRand = rand;
+	if (pret != nullptr && nr > 0 && loc != nullptr)
+	{
+		pretBilet = new double[nr];
+		nrLoc = new int[nr];
+		for (int i = 0; i < nr; i++)
+		{
+			pretBilet[i] = pret[nr];
+			nrLoc[i] = loc[i];
+		}
+		nrBilete = nr;
+	}
+	else {
+		pretBilet = nullptr;
+		nrLoc = nullptr;
 		nrBilete = 0;
 	}
 }
@@ -40,21 +71,23 @@ Bilet::Bilet(const Bilet& b) : idBilet(b.idBilet)
 {
 	numeFilm = new char[strlen(b.numeFilm) + 1];
 	strcpy_s(numeFilm, strlen(b.numeFilm) + 1, b.numeFilm);
-	if (b.pretBilet != nullptr && b.nrBilete > 0)
+	if (b.pretBilet != nullptr && b.nrBilete > 0 && b.nrLoc != nullptr)
 	{
 		pretBilet = new double[b.nrBilete];
+		nrLoc = new int[b.nrBilete];
 		for (int i = 0; i < b.nrBilete; i++)
 		{
 			pretBilet[i] = b.pretBilet[i];
+			nrLoc[i] = b.nrLoc[i];
 		}
 		nrBilete = b.nrBilete;
 	}
 	else {
 		pretBilet = nullptr;
+		nrLoc = nullptr;
 		nrBilete = 0;
 	}
 	idSala = b.idSala;
-	nrLoc = b.nrLoc;
 	nrRand = b.nrRand;
 }
 //destructorul
@@ -64,6 +97,12 @@ Bilet::~Bilet()
 	{
 		delete[] pretBilet;
 	}
+
+	if (nrLoc != nullptr)
+	{
+		delete[] nrLoc;
+	}
+
 	if (numeFilm != nullptr)
 	{
 		delete[] numeFilm;
@@ -77,19 +116,28 @@ Bilet& Bilet::operator=(const Bilet& b)
 		{
 			delete[] pretBilet;
 		}
-		if (b.pretBilet != nullptr && b.nrBilete > 0)
+		if (nrLoc != nullptr) {
+			delete[] nrLoc;
+		}
+		if (b.pretBilet != nullptr && b.nrBilete > 0 && b.nrLoc != nullptr)
 		{
 			pretBilet = new double[b.nrBilete];
+			nrLoc = new int[b.nrBilete];
 			for (int i = 0; i < b.nrBilete; i++)
 			{
 				pretBilet[i] = b.pretBilet[i];
+				nrLoc[i] = b.nrLoc[i];
 			}
 			nrBilete = b.nrBilete;
 		}
 		else {
 			pretBilet = nullptr;
+			nrLoc = nullptr;
 			nrBilete = 0;
 		}
+
+		idSala = b.idSala;
+		nrRand = b.nrRand;
 
 		if (numeFilm != nullptr)
 		{
@@ -101,6 +149,78 @@ Bilet& Bilet::operator=(const Bilet& b)
 
 	return *this;
 }
+
+vector<Bilet> Bilet::incarca(string fisier)
+{
+	vector<Bilet> bilete;
+
+	ifstream in(fisier, ios::binary);
+	if (!in.good()) {
+		// Fisierul poate sa nu existe
+		return bilete;
+	}
+
+	int nr;
+	in.read((char*)&nr, sizeof(nr));
+
+	for (int i = 0; i < nr; ++i)
+	{
+		int id;
+		in.read((char*)&id, sizeof(id));
+
+		int numeFilmLen;
+		in.read((char*)&numeFilmLen, sizeof(numeFilmLen));
+		char* numeFilm = new char[numeFilmLen];
+		in.read(numeFilm, numeFilmLen);
+
+		int nrBilete;
+		in.read((char*)&nrBilete, sizeof(nrBilete));
+		double* pretBilet = new double[nrBilete];
+		in.read((char*)pretBilet, nrBilete * sizeof(double));
+		int* nrLoc = new int[nrBilete];
+		in.read((char*)nrLoc, nrBilete * sizeof(int));
+
+		int idSala;
+		in.read((char*)&idSala, sizeof(idSala));
+
+		int nrRand;
+		in.read((char*)&nrRand, sizeof(nrRand));
+
+		bilete.emplace_back(id, numeFilm, idSala, nrLoc, nrRand, nrBilete, pretBilet);
+
+		delete[] numeFilm;
+		delete[] pretBilet;
+		delete[] nrLoc;
+	}
+
+	return bilete;
+}
+void Bilet::salveaza(string fisier, vector<Bilet> bilete)
+{
+	ofstream out(fisier, ios::binary);
+
+	int nr = size(bilete);
+	out.write((char*)&nr, sizeof(nr));
+
+	for (int i = 0; i < size(bilete); ++i)
+	{
+		out.write((char*)&bilete[i].idBilet, sizeof(bilete[i].idBilet));
+
+		int len = strlen(bilete[i].numeFilm) + 1;
+		out.write((char*)&len, sizeof(len));
+		out.write(bilete[i].numeFilm, len);
+
+		out.write((char*)&bilete[i].nrBilete, sizeof(bilete[i].nrBilete));
+		out.write((char*)&bilete[i].pretBilet, bilete[i].nrBilete * sizeof(double));
+		out.write((char*)&bilete[i].nrLoc, bilete[i].nrBilete * sizeof(int));
+
+		out.write((char*)&bilete[i].idSala, sizeof(bilete[i].idSala));
+		out.write((char*)&bilete[i].nrRand, sizeof(bilete[i].nrRand));
+	}
+
+	//out.close();
+}
+
 //operator []
 double& Bilet::operator[](int index)
 {
@@ -191,24 +311,31 @@ istream& operator>>(istream& in, Bilet& b)
 	cout << "Sala: ";
 	in >> b.idSala;
 
-	cout << "Loc: ";
-	in >> b.nrLoc;
 	cout << "Rand: ";
 	in >> b.nrRand;
+
 	cout << "Numar bilete: ";
 	in >> b.nrBilete;
-	if (b.nrBilete > 0 && b.pretBilet != nullptr)
+	if (b.nrBilete > 0 && b.pretBilet != nullptr && b.nrLoc != nullptr)
 	{
 		b.pretBilet = new double[b.nrBilete];
+		b.nrLoc = new int[b.nrBilete];
 		for (int i = 0; i < b.nrBilete; i++)
 		{
 			cout << "Pret per bilet[" << i << "] = ";
 			in >> b.pretBilet[i];
 		}
+
+		for (int i = 0; i < b.nrBilete; i++)
+		{
+			cout << "Loc per bilet[" << i << "] = ";
+			in >> b.nrLoc[i];
+		}
 	}
 	else {
 		b.nrBilete = 0;
 		b.pretBilet = nullptr;
+		b.nrLoc = nullptr;
 	}
 	return in;
 }
@@ -269,22 +396,76 @@ double* Bilet::getPretBilet()
 		return nullptr;
 	}
 }
-void Bilet::setPretBilet(double* pretBilet, int nrBilet)
+void Bilet::setPretBilet(double* pretBilet, int nrBilete)
 {
-	if (pretBilet != nullptr && nrBilet > 0)
+	if (pretBilet != nullptr && nrBilete > 0)
 	{
-		this->pretBilet = new double[nrBilet];
-		for (int i = 0; i < nrBilet; i++)
+		this->pretBilet = new double[nrBilete];
+		for (int i = 0; i < nrBilete; i++)
 		{
 			this->pretBilet[i] = pretBilet[i];
 		}
-		this->nrBilete = nrBilet;
+		this->nrBilete = nrBilete;
 	}
 	else {
 		this->pretBilet = nullptr;
-		this->nrBilete = nrBilet;
+		this->nrBilete = 0;
 	}
 }
 
-//initializarea atributului static
-string Bilet::numeCinema = "Griffindor";
+int Bilet::getIdBilet() {
+	return idBilet;
+}
+int Bilet::getRandBilet() {
+	return nrRand;
+}
+void Bilet::setRandBilet(int i) {
+	if (i > 0)
+	{
+		nrRand = i;
+	}
+	else {
+		nrRand;
+	}
+}
+int* Bilet::getLocBilet() {
+	if (nrLoc != nullptr)
+	{
+		int* aux = new int[nrBilete];
+		for (int i = 0; i < nrBilete; i++)
+		{
+			aux[i] = nrLoc[nrBilete];
+		}
+		return aux;
+	}
+	else {
+		return nullptr;
+	}
+}
+void Bilet::setLocBilet(int* loc, int nrBilete) {
+	if (loc != nullptr && nrBilete > 0)
+	{
+		nrLoc = new int[nrBilete];
+		for (int i = 0; i < nrBilete; i++)
+		{
+			nrLoc[i] = loc[i];
+		}
+		this->nrBilete = nrBilete;
+	}
+	else {
+		this->nrLoc = nullptr;
+		this->nrBilete = 0;
+	}
+}
+int Bilet::getIdSala() {
+	return idSala;
+}
+void Bilet::setIdSala(int i) {
+	if (i > 0)
+	{
+		idSala = i;
+	}
+	else {
+		idSala;
+	}
+}
