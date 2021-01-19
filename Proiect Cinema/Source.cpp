@@ -128,7 +128,7 @@ void command_am() // add movie
 	std::system("CLS");
 	cout << "Nume film: ";
 	string nume;
-	cin >> nume; // sarim peste \n
+	getline(cin, nume); // sarim peste \n
 	getline(cin, nume);
 
 	cout << "Durata: ";

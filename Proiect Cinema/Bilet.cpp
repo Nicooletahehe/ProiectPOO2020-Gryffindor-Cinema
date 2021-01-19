@@ -71,7 +71,6 @@ Bilet::Bilet(char* nume, int idS, int* loc, int rand, int nr, double* pret) : id
 	if (pret != nullptr && nr > 0 && loc != nullptr)
 	{
 		pretBilet = new double[nr];
-		nrLoc = new int[nr];
 		for (int i = 0; i < nr; i++)
 		{
 			pretBilet[i] = pret[i];

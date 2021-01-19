@@ -403,6 +403,24 @@ int Sala::getIdSala() {
 	return idSala;
 }
 
+int Sala::getNrLocuri()
+{
+	return nrLocuri;
+}
+void Sala::setNrLocuri(int i) {
+	if (i > 0)
+	{
+		nrLocuri = i;
+	}
+	else {
+		nrLocuri;
+	}
+}
+
+int Sala::getIdSala() {
+	return idSala;
+}
+
 int** Sala::getDiagramaLocuri()
 {
 	if (diagramaLocuri != nullptr)
