@@ -1,13 +1,15 @@
 #pragma once
+#include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
 
 class Cinema
 {
 	const int idCinema;
-	static string nume;
+	static int id;
 	char* adresa;
 	//Sala nrSali[4]; //5 sali in cinema
 	int nrIntrari;
@@ -19,13 +21,18 @@ public:
 	//constructor implicit
 	Cinema();
 	//constructor cu parametri
-	Cinema(char*, int, double*);
+	Cinema(int, const char*, int, double*);
+	Cinema(const char*, int, double*);
 	//constructorul de copiere
 	Cinema(const Cinema& c);
 	//destructorul
 	~Cinema();
 	//operatorul =
 	Cinema& operator=(const Cinema& c);
+
+	static vector<Cinema> incarca(string fisier);
+	static void salveaza(string fisier, vector<Cinema> cinemas);
+
 	//operator []
 	double& operator[](int);
 	//un operator matematic
@@ -50,6 +57,8 @@ public:
 
 	int getNrIntrari();
 	void setNrIntrari(int);
+
+	int getIdCinema();
 
 	double* getProfitIntrari();
 	void setProfitIntrari(double* profit, int intrari);

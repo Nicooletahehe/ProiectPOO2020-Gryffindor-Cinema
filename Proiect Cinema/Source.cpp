@@ -13,6 +13,7 @@ using namespace std;
 
 vector<Film> filme;
 vector<Angajat> angajati;
+vector<Cinema> cinemas;
 
 int sizeMargini = 77;
 void afisareMeniu(string e, int sizeMargini) {
@@ -496,6 +497,217 @@ void meniuAngajat() {
 	}
 }
 
+//Cinemas
+void lista_cinemas() {
+	std::system("CLS");
+	cout << "Lista de cinemas: " << endl;
+	for (Cinema& a : cinemas) {
+		cout << "Id#" << a.getIdCinema() << ". Adresa: " << a.getAdresa() << endl;
+		cout << "     Intrari: " << a.getNrIntrari() << endl;
+	}
+	cout << "Total de " << size(cinemas) << " cinema/s.";
+	cout << endl;
+}
+void lista_cinema() {
+	std::system("CLS");
+	cout << "Introduceti Id(#) cinema: ";
+	int id;
+	cin >> id;
+
+	for (int i = 0; i < size(cinemas); i++) {
+		if (cinemas[i].getIdCinema() == id) {
+			cout << cinemas[i] << endl;
+		}
+	}
+
+	if (size(cinemas) == 0) {
+		cout << "Cinema-ul cu Id#" << id << " nu exista." << endl;
+	}
+}
+void adauga_cinema() {
+	std::system("CLS");
+	cout << "Pentru salvarea unui nou cinema, introduceti urmatoarele date:" << endl;;
+	cout << "Adresa: ";
+	char buffer[100];
+	char* adresa;
+	cin >> ws;
+	cin.getline(buffer, 99);
+	adresa = new char[strlen(buffer) + 1];
+	strcpy_s(adresa, strlen(buffer) + 1, buffer);
+
+	cout << "Numar Intrari: ";
+	int intrari;
+	cin >> intrari;
+
+	cout << "Profit: ";
+	double* profit;
+	if (intrari > 0) {
+		profit = new double[intrari];
+		for (int i = 0; i < intrari; i++)
+		{
+			cout << "Profit#" << i << " = ";
+			cin >> profit[i];
+		}
+	}
+	else {
+		intrari = 0;
+		profit = nullptr;
+	}
+
+	Cinema c(adresa, intrari, profit);
+	cinemas.emplace_back(c);
+
+	cout << "Cinema-ul a fost adaugat." << endl;
+	cout << c << endl;
+
+	Cinema::salveaza("cinemas.bin", cinemas);
+}
+void modifica_cinema() {
+	std::system("CLS");
+	cout << "Pentru modificarea unui cinema, introduceti urmatoarele date:" << endl;
+	cout << "Introduceti Id(#) cinema: ";
+	int id;
+	cin >> id;
+
+	int index = -1;
+	for (int i = 0; i < size(cinemas); ++i)
+	{
+		if (cinemas[i].getIdCinema() == id)
+		{
+			index = i;
+		}
+	}
+
+	if (index == -1)
+	{
+		cout << "Cinema-ul cu Id#" << id << " nu a fost gasit." << endl;
+		cout << "Mergeti la lista cu cinemas, folosind tasta 1.";
+		return;
+	}
+
+	cout << "Adresa: ";
+	char buffer[100];
+	char* adresa;
+	cin >> ws;
+	cin.getline(buffer, 99);
+	adresa = new char[strlen(buffer) + 1];
+	strcpy_s(adresa, strlen(buffer) + 1, buffer);
+	cinemas[index].setAdresa(adresa);
+
+	cout << "Numar intrari: ";
+	int intrari;
+	cin >> intrari;
+	cinemas[index].setNrIntrari(intrari);
+
+	cout << "Profit: ";
+	double* profit;
+	if (intrari > 0) {
+		profit = new double[intrari];
+		for (int i = 0; i < intrari; i++)
+		{
+			cout << "Bonus#" << i << " = ";
+			cin >> profit[i];
+		}
+		cout << profit << endl;
+	}
+	else {
+		intrari = 0;
+		profit = nullptr;
+	}
+	cinemas[index].setProfitIntrari(profit, intrari);
+	cinemas[index].getProfitIntrari();
+
+	cout << "Cinema-ul cu Id#:" << cinemas[index].getIdCinema() << " a fost modificat." << endl;
+	cout << cinemas[index];
+	cout << endl;
+
+	Cinema::salveaza("cinemas.bin", cinemas);
+}
+void sterge_cinema() {
+	std::system("CLS");
+	cout << "Introduceti Id(#) Cinema: ";
+	int id;
+	cin >> id;
+
+	int index = -1;
+	for (int i = 0; i < size(cinemas); ++i)
+	{
+		if (cinemas[i].getIdCinema() == id)
+		{
+			index = i;
+		}
+	}
+
+	if (index != -1)
+	{
+		cinemas.erase(cinemas.begin() + index);
+	}
+
+	Cinema::salveaza("cinemas.bin", cinemas);
+}
+void meniuCinema() {
+	//Incarcare Meniu Cinema
+	std::system("CLS");
+	cinemas = Cinema::incarca("cinemas.bin");
+
+	while (true)
+	{
+		header();
+		titluCinema();
+		titlu("Cinema ");
+		randuriLibere();
+
+		string meniu1 = "1. Afiseaza cinemas";
+		string meniu2 = "2. Afiseaza cinema";
+		string meniu3 = "3. Adauga cinema";
+		string meniu4 = "4. Modifica cinema";
+		string meniu5 = "5. Sterge cinema";
+		string meniu6 = "6. Iesire Program";
+
+		afisareMeniu(meniu1, sizeMargini);
+		afisareMeniu(meniu2, sizeMargini);
+		afisareMeniu(meniu3, sizeMargini);
+		afisareMeniu(meniu4, sizeMargini);
+		afisareMeniu(meniu5, sizeMargini);
+		afisareMeniu(meniu6, sizeMargini);
+
+		randuriLibere();
+		footer();
+		cout << endl;
+		for (int i = 0; i < 20; i++) {
+			cout << " ";
+		}
+		std::cout << "Introdu codul unei comenzi: ";
+
+		int cmd;
+		std::cin >> cmd;
+		if (cmd == 1)
+		{
+			lista_cinemas();
+		}
+		else if (cmd == 2)
+		{
+			lista_cinema();
+		}
+		else if (cmd == 3)
+		{
+			adauga_cinema();
+		}
+		else if (cmd == 4)
+		{
+			modifica_cinema();
+		}
+		else if (cmd == 5)
+		{
+			sterge_cinema();
+		}
+		else if (cmd == 6)
+		{
+			break;
+		}
+	}
+}
+
 void meniu_principal()
 {
 	header();
@@ -529,6 +741,7 @@ void meniu_principal()
 	cin >> optiune;
 	if (optiune == 1) {
 		//cinema
+		meniuCinema();
 	}
 	else if (optiune == 2) {
 		//film

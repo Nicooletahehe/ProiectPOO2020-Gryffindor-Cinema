@@ -2,16 +2,22 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
+
+#include <iomanip>
+
+//initializarea atributului static
+int Cinema::id = 0;
 
 //constructor implicit
-Cinema::Cinema() : idCinema(1)
+Cinema::Cinema() : idCinema(id)
 {
 	adresa = NULL;
 	nrIntrari = 0;
 	profitIntrari = NULL;
 }
 //constructor cu parametri
-Cinema::Cinema(char* adr, int nr, double* pret) : idCinema(idCinema)
+Cinema::Cinema(int idCinema, const char* adr, int nr, double* pret) : idCinema(idCinema)
 {
 	adresa = new char[strlen(adr) + 1];
 	strcpy_s(adresa, strlen(adr) + 1, adr);
@@ -20,7 +26,30 @@ Cinema::Cinema(char* adr, int nr, double* pret) : idCinema(idCinema)
 		profitIntrari = new double[nr];
 		for (int i = 0; i < nr; i++)
 		{
-			profitIntrari[i] = pret[nr];
+			profitIntrari[i] = pret[i];
+		}
+		nrIntrari = nr;
+	}
+	else {
+		profitIntrari = nullptr;
+		nrIntrari = 0;
+	}
+
+	if (id < idCinema)
+	{
+		id = idCinema;
+	}
+}
+Cinema::Cinema(const char* adr, int nr, double* pret) : idCinema(++id)
+{
+	adresa = new char[strlen(adr) + 1];
+	strcpy_s(adresa, strlen(adr) + 1, adr);
+	if (pret != nullptr && nr > 0)
+	{
+		profitIntrari = new double[nr];
+		for (int i = 0; i < nr; i++)
+		{
+			profitIntrari[i] = pret[i];
 		}
 		nrIntrari = nr;
 	}
@@ -92,6 +121,64 @@ Cinema& Cinema::operator=(const Cinema& c)
 
 	return *this;
 }
+vector<Cinema> Cinema::incarca(string fisier)
+{
+	vector<Cinema> cinemas;
+
+	ifstream in(fisier, ios::binary);
+	if (!in.good()) {
+		// Fisierul poate sa nu existe
+		return cinemas;
+	}
+
+	int nr;
+	in.read((char*)&nr, sizeof(nr));
+
+	for (int i = 0; i < nr; ++i)
+	{
+		int id;
+		in.read((char*)&id, sizeof(id));
+
+		int adresaLen;
+		in.read((char*)&adresaLen, sizeof(adresaLen));
+		char* adresa = new char[adresaLen];
+		in.read(adresa, adresaLen);
+
+		int nrIntrari;
+		in.read((char*)&nrIntrari, sizeof(nrIntrari));
+		double* profit = new double[nrIntrari];
+		in.read((char*)profit, nrIntrari * sizeof(double));
+
+		cinemas.emplace_back(id, adresa, nrIntrari, profit);
+
+		delete[] adresa;
+		delete[] profit;
+	}
+
+	return cinemas;
+}
+void Cinema::salveaza(string fisier, vector<Cinema> cinemas)
+{
+	ofstream out(fisier, ios::binary);
+
+	int nr = size(cinemas);
+	out.write((char*)&nr, sizeof(nr));
+
+	for (int i = 0; i < size(cinemas); ++i)
+	{
+		out.write((char*)&cinemas[i].idCinema, sizeof(cinemas[i].idCinema));
+		
+		int len = strlen(cinemas[i].adresa) + 1;
+		out.write((char*)&len, sizeof(len));
+		out.write(cinemas[i].adresa, len);
+
+		out.write((char*)&cinemas[i].nrIntrari, sizeof(cinemas[i].nrIntrari));
+		out.write((char*)&cinemas[i].profitIntrari, cinemas[i].nrIntrari * sizeof(double));
+	}
+
+	//out.close();
+}
+
 //operator []
 double& Cinema::operator[](int index)
 {
@@ -194,7 +281,6 @@ istream& operator>>(istream& in, Cinema& c)
 	return in;
 }
 
-
 char* Cinema::getAdresa()
 {
 	if (adresa != nullptr)
@@ -267,5 +353,6 @@ void Cinema::setProfitIntrari(double* profit, int nr)
 	}
 }
 
-//initializarea atributului static
-string Cinema::nume = "Griffindor";
+int Cinema::getIdCinema() {
+	return idCinema;
+}
