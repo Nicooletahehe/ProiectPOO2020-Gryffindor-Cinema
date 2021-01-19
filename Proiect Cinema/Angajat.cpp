@@ -291,7 +291,6 @@ istream& operator>>(istream& in, Angajat& a)
 	return in;
 }
 
-
 char* Angajat::getUsername()
 {
 	if (username != nullptr)

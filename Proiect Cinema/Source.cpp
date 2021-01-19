@@ -799,6 +799,7 @@ void harry_intro() {
 
 int main()
 {
+	harry_intro();
 	meniu_principal();
 
 	return 0;
