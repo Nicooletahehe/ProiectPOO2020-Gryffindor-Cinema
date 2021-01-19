@@ -20,7 +20,7 @@ Bilet::Bilet() : idBilet(id)
 	pretBilet = NULL;
 }
 //constructor cu parametri
-Bilet::Bilet(int idBilet,char* nume, int idS, int* loc, int rand, int nr, double* pret) : idBilet(idBilet)
+Bilet::Bilet(int idBilet, char* nume, int idS, int* loc, int rand, int nr, double* pret) : idBilet(idBilet)
 {
 	numeFilm = new char[strlen(nume) + 1];
 	strcpy_s(numeFilm, strlen(nume) + 1, nume);
@@ -32,7 +32,7 @@ Bilet::Bilet(int idBilet,char* nume, int idS, int* loc, int rand, int nr, double
 		nrLoc = new int[nr];
 		for (int i = 0; i < nr; i++)
 		{
-			pretBilet[i] = pret[i];
+			pretBilet[i] = pret[nr];
 			nrLoc[i] = loc[i];
 		}
 		nrBilete = nr;
@@ -41,25 +41,6 @@ Bilet::Bilet(int idBilet,char* nume, int idS, int* loc, int rand, int nr, double
 		pretBilet = nullptr;
 		nrLoc = nullptr;
 		nrBilete = 0;
-	}
-
-	if (nr > 0 && loc != nullptr)
-	{
-		nrLoc = new int[nr];
-		for (int i = 0; i < nr; i++)
-		{
-			nrLoc[i] = loc[i];
-		}
-		nrBilete = nr;
-	}
-	else {
-		nrLoc = nullptr;
-		nrBilete = 0;
-	}
-
-	if (id < idBilet)
-	{
-		id = idBilet;
 	}
 }
 Bilet::Bilet(char* nume, int idS, int* loc, int rand, int nr, double* pret) : idBilet(++id)
@@ -71,29 +52,16 @@ Bilet::Bilet(char* nume, int idS, int* loc, int rand, int nr, double* pret) : id
 	if (pret != nullptr && nr > 0 && loc != nullptr)
 	{
 		pretBilet = new double[nr];
+		nrLoc = new int[nr];
 		for (int i = 0; i < nr; i++)
 		{
-			pretBilet[i] = pret[i];
+			pretBilet[i] = pret[nr];
 			nrLoc[i] = loc[i];
 		}
 		nrBilete = nr;
 	}
 	else {
 		pretBilet = nullptr;
-		nrLoc = nullptr;
-		nrBilete = 0;
-	}
-
-	if (nr > 0 && loc != nullptr)
-	{
-		nrLoc = new int[nr];
-		for (int i = 0; i < nr; i++)
-		{
-			nrLoc[i] = loc[i];
-		}
-		nrBilete = nr;
-	}
-	else {
 		nrLoc = nullptr;
 		nrBilete = 0;
 	}
@@ -168,20 +136,6 @@ Bilet& Bilet::operator=(const Bilet& b)
 			nrBilete = 0;
 		}
 
-		if (b.nrBilete > 0 && b.nrLoc != nullptr)
-		{
-			nrLoc = new int[b.nrBilete];
-			for (int i = 0; i < b.nrBilete; i++)
-			{
-				nrLoc[i] = b.nrLoc[i];
-			}
-			nrBilete = b.nrBilete;
-		}
-		else {
-			nrLoc = nullptr;
-			nrBilete = 0;
-		}
-
 		idSala = b.idSala;
 		nrRand = b.nrRand;
 
@@ -221,10 +175,8 @@ vector<Bilet> Bilet::incarca(string fisier)
 
 		int nrBilete;
 		in.read((char*)&nrBilete, sizeof(nrBilete));
-
 		double* pretBilet = new double[nrBilete];
 		in.read((char*)pretBilet, nrBilete * sizeof(double));
-
 		int* nrLoc = new int[nrBilete];
 		in.read((char*)nrLoc, nrBilete * sizeof(int));
 
@@ -331,6 +283,7 @@ ostream& operator<<(ostream& out, Bilet b)
 	}
 	out << "Sala: " << b.idSala << endl;
 	out << "Rand: " << b.nrRand << endl;
+	out << "Loc: " << b.nrLoc << endl;
 	out << "Numar bilete: " << b.nrBilete << endl;
 	out << "Pret Bilet/e: ";
 	if (b.pretBilet != nullptr)
@@ -340,17 +293,6 @@ ostream& operator<<(ostream& out, Bilet b)
 			out << b.pretBilet[i] << " ";
 		}
 	}
-	out << endl;
-
-	out << "Loc Bilet/e: ";
-	if (b.nrLoc != nullptr)
-	{
-		for (int i = 0; i < b.nrBilete; i++)
-		{
-			out << b.nrLoc[i] << " ";
-		}
-	}
-
 	return out;
 }
 istream& operator>>(istream& in, Bilet& b)
@@ -446,7 +388,7 @@ double* Bilet::getPretBilet()
 		double* aux = new double[nrBilete];
 		for (int i = 0; i < nrBilete; i++)
 		{
-			aux[i] = pretBilet[i];
+			aux[i] = pretBilet[nrBilete];
 		}
 		return aux;
 	}
@@ -454,19 +396,20 @@ double* Bilet::getPretBilet()
 		return nullptr;
 	}
 }
-void Bilet::setPretBilet(double* p, int nr)
+void Bilet::setPretBilet(double* pretBilet, int nrBilete)
 {
-	if (p != nullptr && nr > 0)
+	if (pretBilet != nullptr && nrBilete > 0)
 	{
-		pretBilet = new double[nr];
-		for (int i = 0; i < nr; i++)
+		this->pretBilet = new double[nrBilete];
+		for (int i = 0; i < nrBilete; i++)
 		{
-			pretBilet[i] = p[i];
+			this->pretBilet[i] = pretBilet[i];
 		}
-		nrBilete = nr;
+		this->nrBilete = nrBilete;
 	}
 	else {
-		pretBilet = nullptr;
+		this->pretBilet = nullptr;
+		this->nrBilete = 0;
 	}
 }
 
@@ -491,7 +434,7 @@ int* Bilet::getLocBilet() {
 		int* aux = new int[nrBilete];
 		for (int i = 0; i < nrBilete; i++)
 		{
-			aux[i] = nrLoc[i];
+			aux[i] = nrLoc[nrBilete];
 		}
 		return aux;
 	}
@@ -499,19 +442,19 @@ int* Bilet::getLocBilet() {
 		return nullptr;
 	}
 }
-void Bilet::setLocBilet(int* loc, int nr) {
-	if (loc != nullptr && nr > 0)
+void Bilet::setLocBilet(int* loc, int nrBilete) {
+	if (loc != nullptr && nrBilete > 0)
 	{
-		nrLoc = new int[nr];
-		for (int i = 0; i < nr; i++)
+		nrLoc = new int[nrBilete];
+		for (int i = 0; i < nrBilete; i++)
 		{
 			nrLoc[i] = loc[i];
 		}
-		nrBilete = nr;
+		this->nrBilete = nrBilete;
 	}
 	else {
-		nrLoc = nullptr;
-		nrBilete = 0;
+		this->nrLoc = nullptr;
+		this->nrBilete = 0;
 	}
 }
 int Bilet::getIdSala() {

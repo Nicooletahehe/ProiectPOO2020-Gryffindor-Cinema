@@ -121,10 +121,8 @@ Angajat& Angajat::operator=(const Angajat& a)
 		}
 		username = new char[strlen(a.username) + 1];
 		strcpy_s(username, strlen(a.username) + 1, a.username);
-
-		anulNasterii = a.anulNasterii;
 	}
-	
+	anulNasterii = a.anulNasterii;
 	return *this;
 }
 vector<Angajat> Angajat::incarca(string fisier)
