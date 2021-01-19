@@ -30,6 +30,9 @@
     <ClCompile Include="Bilet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sala.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header Files\Angajat.h">
