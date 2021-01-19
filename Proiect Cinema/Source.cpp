@@ -93,6 +93,7 @@ void footer() {
 	cout << "\xBC" << endl;
 }
 void meniu_principal();
+
 //meniu Filme
 void command_lm() // list movies
 {
@@ -1303,7 +1304,7 @@ void harry_intro() {
 			harry[i].insert(0, aux);
 		};
 
-		cout << "Apasati tasta enter pentru a va indrepta spre meniul principal.";
+		cout << "Play Life Like Gryffindor Plays Quidditch. ALWAYS WIN.";
 		//string enter;
 		//cin >> enter;
 		Sleep(50);
